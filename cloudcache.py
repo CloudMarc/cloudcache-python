@@ -74,6 +74,23 @@ class CloudCache:
     ret = urllib2.urlopen(req)
     return str(ret.read())
 
+  def getmulti(self, keys):
+    ts = self.__generate_timestamp(time.gmtime())
+    sig = self.__generate_signature("CloudCache", "multi", ts, self.skey)
+  
+    url = "http://" + self.host + ":" + self.port + "/getmulti"
+    print "getmulti url = " + url
+    
+    headers = {'User-Agent' : "CloudCache Pip version 0.4", 'signature' : sig, 'timestamp' : ts, 'akey' : self.akey}
+ 
+    #headers['HTTP_KEYS'] = json.dumps(keys)
+    headers['keys'] = json.dumps(keys)
+
+    print "getmulti headers:  " + str(headers)
+    req = urllib2.Request(url, None, headers)
+    ret = urllib2.urlopen(req)
+    return str(ret.read())
+    
   def get(self, key):
     ts = self.__generate_timestamp(time.gmtime())
     sig = self.__generate_signature("CloudCache", "GET", ts, self.skey)
